@@ -16,7 +16,7 @@ struct Stack* createStack( unsigned capacity )
     stack->top = -1;
     stack->capacity = capacity;
  
-    stack->array = (int*) malloc(stack->capacity * sizeof(int)); //allocation of space to array.
+    stack->array = (int*) malloc(stack->capacity * sizeof(int));
  
     if (!stack->array)
         return NULL;
