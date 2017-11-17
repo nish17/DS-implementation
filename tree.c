@@ -1,111 +1,82 @@
 #include <stdio.h>
 #include <stdlib.h>
-// #include <malloc.h>
+#include <stdbool.h>
+#define COUNT 10
 struct Node{
   int data;
   struct Node* left;
   struct Node* right;
 };
-
 typedef struct Node* node;
 node root;
-node createNewNode(int x){
-  node current = (node) malloc(sizeof(node));
-  current->data =x;
-  current->left = current->right = NULL;
-  return current;
+node createNewNode(int data){
+  node child = (node)malloc(sizeof(node));
+  child->data = data;
+  child->left = child->right = NULL;
+  return child;
 }
 
-node plant(node root, int x){
-  if(root == NULL) root = createNewNode(x);
-  else if(x <= root->data) root->left = plant(root->left, x);
-  else if(x > root->data) root->right = plant(root->right, x);
-
-  return root;
-}
-
-node minOf(node root){
-  while(root->left != NULL) root = root->left;
-  return root;
-}
-
-node deleteIt(node root, int data){
-  if(root == NULL) return root;
-  else if(data < root->data) root->left = deleteIt(root->left,data);
-  else if(data > root->data) root->right = deleteIt(root->right,data);
-  else{
-    if(root->right == NULL && root->left == NULL){
-      free(root);
-      root = NULL;
-    }
-    else if(root->left == NULL){
-      node temp = root;
-      root = root->right;
-      free(temp);
-    }
-    else if(root->right == NULL){
-      node temp = root;
-      root = root->left;
-      free(temp);
-    }
-    else{
-      node temp = minOf(root->right);
-      root->data = temp->data;
-      root->right = deleteIt(root->right,temp->data);
-    }
+node insert(node root, int data){
+  if(root == NULL){
+    root = createNewNode(data);
+  }
+  else if(data <= root->data){
+    root->left = insert(root->left, data);
+  }
+  else {
+    root->right = insert(root->right,data);
   }
   return root;
 }
 
-int search(node root, int x){
-  if(root == NULL) return 0;
-  else if(x == root->data) return 1;
-  else if(x <= root->data) return search(root->left, x);
-  else if(x > root->data) return search(root->right, x);
-  else return 0;
+bool search(node root, int data){
+  if(root == NULL){
+    printf("%d not found\n",data);
+    return 0;
+  }
+  else if(root->data == data){
+    printf("%d found\n",data);
+    return 1;
+  }
+  else if(data <= root->data) return search(root->left, data);
+  else return search(root->right, data);
 }
 
-void postOrderTraversal(node root){
-  if (root == NULL) return;
-  postOrderTraversal(root->left);
-  postOrderTraversal(root->right);
-  printf("%d ", root->data);
+void print2D(node root, int space){
+  int i;
+  if(root == NULL) return;
+
+  space += COUNT;
+
+  print2D(root->right, space);
+  printf("\n");
+  for(i=COUNT; i<space; i++) printf(" ");
+  printf("%d\n",root->data);
+  print2D(root->left, space);
 }
-
-void inOrderTraversal(node root){
-  if (root == NULL) return;
-  inOrderTraversal(root->left);
-  printf("%d ", root->data);  
-  inOrderTraversal(root->right);
+void print2(node root){
+  print2D(root, 0);
 }
- 
-void preOrderTraversal(node root){
-  if (root == NULL) return;
-  printf("%d ", root->data);  
-  preOrderTraversal(root->left);  
-  preOrderTraversal(root->right);
-}    
-
-
 int main(){
   root = NULL;
-  
-  int k,t,n,ch;
-  printf("Enter the number of inputs\n");
-  scanf("%d",&n);
-  printf("Enter the values\n");
-  while(n--){
-    scanf("%d",&t);
-    root = plant(root, t);
-}
-  
-  printf("you wanna search for any element?\n");
-  scanf("%d",&k);
-  scanf("%d",&ch);
-  if(k==1){
-    if(search(root,ch)) printf("found\n");
-    else printf("not found");
+  int t,n,c,k;
+  printf("Number of inputs: ");
+  scanf("%d",&t);
+  printf("Enter the value ");
+  while(t--){
+    scanf("%d",&n);
+    root = insert(root,n);
   }
-  preOrderTraversal(root);
-  return 0;
+  printf("sadf\n");
+  scanf("%d",&c);
+  if(c==1) print2(root);
+
+  // printf("You wanna search for any element? if yes press 1\n");
+  // scanf("%d",&c);
+  // if(c==1){
+  //   printf("Enter the value u wanna search\n");
+  //   scanf("%d",&k);
+  //   search(root,k);
+  // }
+  // else exit(-1); 
 }
